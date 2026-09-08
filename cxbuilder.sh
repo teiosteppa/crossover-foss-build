@@ -441,6 +441,8 @@ else
     fi
 fi)"
 scratch_dir_inode="$(get_inode "$scratch_dir")"
+# let's target sonoma for subsequent builds just in case
+export MACOSX_DEPLOYMENT_TARGET=14.0
 
 if test $fetch_deps = 1; then
     for cmd in curl tar; do
@@ -1119,7 +1121,7 @@ if test $fetch_deps = 1; then
             info "libinotify-kqueue build log:"
             (
                 cd "$libinkq_build_dir" && autoreconf -fvi 2>&1 && \
-                CFLAGS="${CFLAGS:+$CFLAGS }-target x86_64-apple-macos -arch x86_64" ./configure --prefix="$tmp_prefix" 2>&1 && make clean 2>&1 && \
+                CFLAGS="${CFLAGS:+$CFLAGS }-target x86_64-apple-macos14 -arch x86_64" ./configure --host=x86_64-apple-darwin23 --prefix="$tmp_prefix" 2>&1 && make clean 2>&1 && \
                 make -j$build_ncpu 2>&1 && make install prefix="/" DESTDIR="$libinkq_dir" 2>&1 && touch "$libinkq_build_dir/.cxb-success"
             ) | extinfo
             if test -f "$libinkq_build_dir/.cxb-success"; then
@@ -1153,7 +1155,7 @@ if test $fetch_deps = 1; then
             mv "$macos_pkgconfig_fetch_dir" "$macos_pkgconfig_dir"
         fi
 
-        macos_ver="$(sw_vers -productVersion)"
+        macos_ver="14.6.1"
         case "$macos_ver" in
             10.*)macos_subver="${macos_ver#*.}"; macos_ver="${macos_ver%%.*}.${macos_subver%%.*}";;
             *) macos_ver="${macos_ver%%.*}";;
@@ -1236,7 +1238,7 @@ build_wine() {
         rm -f "$wine_conf_dir/distversion.h" && ln -s "build/include/distversion.h" "$wine_conf_dir/distversion.h" || exite "failed to symlink distversion.h"
 
         if test $is_apple_silicon = 1; then
-            (arch -x86_64 ../src/configure $wineconf_args --prefix="$tmp_prefix" --verbose 2>&1 && touch ".cxb-success") | extinfo
+            (arch -x86_64 ../src/configure $wineconf_args --host=x86_64-apple-darwin23 --prefix="$tmp_prefix" --verbose 2>&1 && touch ".cxb-success") | extinfo
         else
             (../src/configure $wineconf_args --prefix="$tmp_prefix" 2>&1 && touch ".cxb-success") | extinfo
         fi
