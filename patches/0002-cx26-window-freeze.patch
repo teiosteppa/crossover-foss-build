@@ -1,0 +1,21 @@
+diff --git a/dlls/win32u/freetype.c b/dlls/win32u/freetype.c
+index 701930c..6d6a2b4 100644
+--- a/dlls/win32u/freetype.c
++++ b/dlls/win32u/freetype.c
+@@ -1414,6 +1414,16 @@ static void load_mac_fonts(void)
+     CFMutableSetRef urls;
+     CFIndex i;
+ 
++    /* CoreText caches these font descriptors for the lifetime of the process
++     *
++     * Let's initialize UIFoundation now, so the CTFontDescriptor <-> NSFontDescriptor
++     * bridge is registered and the descriptors don't report as __NSCFType forever
++     *
++     * Needed on Tahoe so AppKit doesn't crap itself (block ability to window focus)
++     * when accessing them later */
++    dlopen("/System/Library/PrivateFrameworks/UIFoundation.framework/UIFoundation",
++           RTLD_LAZY | RTLD_GLOBAL);
++
+     removeDupesKey = kCTFontCollectionRemoveDuplicatesOption;
+     removeDupesValue = kCFBooleanTrue;
+     options = CFDictionaryCreate(NULL, (const void**)&removeDupesKey, (const void**)&removeDupesValue, 1,
