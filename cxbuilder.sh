@@ -543,9 +543,10 @@ if test $fetch_deps = 1; then
 
     if test $is_macos = 1; then
         case "$(sw_vers -productVersion)" in
+            26.*) sys_info="tahoe";;
             15.*) sys_info="sequoia";;
             14.*) sys_info="sonoma";;
-            13.*) sys_info-"ventura";;
+            13.*) sys_info="ventura";;
             12.*) sys_info="monterey";;
             *) sys_info="unknown";;
         esac
@@ -557,7 +558,8 @@ if test $fetch_deps = 1; then
         fi
 
         # TODO: remove if brew starts building bottles for x86_64 macOS Sequoia
-        if test "$sys_info" = "sequoia"; then
+        # they did not
+        if test "$sys_info" = "tahoe" || test "$sys_info" = "sequoia"; then
             sys_info="sonoma"
         fi
     fi
