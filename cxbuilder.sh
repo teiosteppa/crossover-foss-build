@@ -875,7 +875,7 @@ if test $fetch_deps = 1; then
 
         # for build tools only, prefer Homebrew if already installed
         # (runtime libs need x86_64 bottles for Apple Silicon cross-build)
-        if test "$2" = "build" && command -v brew >/dev/null 2>&1 && brew list "$1" &>/dev/null; then
+        if false && test "$2" = "build" && command -v brew >/dev/null 2>&1 && brew list "$1" &>/dev/null; then
             info "package %s found in Homebrew (build dep); linking" "$1"
             brew_ver="$(brew list --versions "$1" 2>/dev/null | awk '{print $NF}')"
             brew_prefix="$(brew --prefix "$1" 2>/dev/null)"
