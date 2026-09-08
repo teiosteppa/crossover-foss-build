@@ -1147,7 +1147,7 @@ if test $fetch_deps = 1; then
             macos_pkgconfig_fetch_dir="$deps_scratch_dir/macos-pkgconfig"
 
             test -d "$macos_pkgconfig_fetch_dir" || mkdir "$macos_pkgconfig_fetch_dir" || exite "failed to create %s" "$macos_pkgconfig_fetch_dir"
-            macos_pkgconfig_url="https://github.com/Homebrew/brew/tarball/master"
+            macos_pkgconfig_url="https://github.com/Homebrew/brew/tarball/main"
 
             curl -s -L "$macos_pkgconfig_url" | tar -zx --strip-components=6 -C "$macos_pkgconfig_fetch_dir" '*/Library/Homebrew/os/mac/pkgconfig' 2> /dev/null || \
                 exite "failed to download pkgcconfig files for macOS builtins"
