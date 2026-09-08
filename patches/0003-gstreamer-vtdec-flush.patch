@@ -1,0 +1,23 @@
+--- a/gst-plugins-bad/sys/applemedia/vtdec.c
++++ b/gst-plugins-bad/sys/applemedia/vtdec.c
+@@ -984,6 +984,20 @@ gst_vtdec_sink_event (GstVideoDecoder * decoder, GstEvent * event)
+       GST_VIDEO_DECODER_CLASS (gst_vtdec_parent_class)->sink_event (decoder,
+       event);
+ 
++  switch (type) {
++    case GST_EVENT_FLUSH_STOP:
++      /* The base class handles this event and calls _flush().
++       * We can then safely reset the flushing flag. */
++      GST_DEBUG_OBJECT (vtdec, "flush stop received, removing flushing flag");
++
++      g_mutex_lock (&vtdec->queue_mutex);
++      vtdec->is_flushing = FALSE;
++      g_mutex_unlock (&vtdec->queue_mutex);
++      break;
++    default:
++      break;
++  }
++
+   return ret;
+ }
+ 
